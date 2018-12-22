@@ -1,5 +1,5 @@
 #!/bin/bash
 
-printf "This script requires sudo\n"
+printf "This script requires sudo!\n"
 cp izmitmake /bin/izmitmake
 printf "Done.\n"
