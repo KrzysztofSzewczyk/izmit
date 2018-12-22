@@ -1,0 +1,94 @@
+#!/bin/bash
+
+PROGNAME="install"
+
+RESTORE=$(echo -en '\033[0m')
+LBLUE=$(echo -en '\033[01;34m')
+LPURPLE=$(echo -en '\033[01;35m')
+LYELLOW=$(echo -en '\033[01;33m')
+LRED=$(echo -en '\033[01;31m')
+LGREEN=$(echo -en '\033[01;32m')
+
+function hr {
+    printf "${LGREEN}=============================================${RESTORE}\n"
+}
+
+function log_hour {
+    printf "${LPURPLE}[%s]${RESTORE} " `date +"%T"`
+}
+
+function log_progname {
+    printf "${LYELLOW}$PROGNAME:${RESTORE} "
+}
+
+function log {
+    log_hour
+    log_progname
+    printf "${LBLUE}"
+}
+
+function logerr {
+    log_hour
+    log_progname
+    printf "${LRED}"
+}
+
+printf "\n${LPURPLE}Izmit: Install v2 by Kamila Palaiologos Szewczyk. Copyright (C) 2018. License: MIT${RESTORE}\n"
+
+if [ "$#" -ne 1 ]; then
+    logerr
+    printf "Usage: izmitinstall package-name ${RESTORE}\n"
+    exit
+fi
+
+log
+printf "Installing $1 ...${RESTORE}\n"
+
+start=`date +%s`
+
+log
+printf "Verifying izmit_modules ...${RESTORE}\n"
+
+mkdir izmit_modules
+cd izmit_modules
+
+log
+printf "Fetching $1 ...${RESTORE}\n"
+
+branchName=""
+packageName=""
+
+if [[ $1 == *"@"* ]]; then
+    IFS='@' read -r -a array <<< "$1"
+    wget "https://github.com/IzmitPM/${array[0]}/archive/${array[1]}.zip" > /dev/null 2> /dev/null
+    branchName=$array[1]
+    packageName=$array[0]
+else
+    wget "https://github.com/IzmitPM/$1/archive/master.zip" > /dev/null 2> /dev/null
+    branchName="master"
+    packageName=$1
+fi
+
+if [ $? -ne 0 ]; then
+    logerr
+    printf "Couldn't fetch $packageName from $branchName branch.${RESTORE}\n"
+    exit
+fi
+
+log
+printf "Fetched $packageName from remote.${RESTORE}\n"
+printf "Unpacking ...${RESTORE}\n"
+
+unzip $branchName.zip
+
+printf "Cleaning up archives ...${RESTORE}\n"
+
+rm $branchName.zip
+
+end=`date +%s`
+total=$((end-start))
+
+log
+printf "Done in %d seconds.\n\n" $total
+
+cd ..

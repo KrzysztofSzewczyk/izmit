@@ -1,0 +1,42 @@
+#!/bin/bash
+
+PROGNAME="list"
+
+RESTORE=$(echo -en '\033[0m')
+LBLUE=$(echo -en '\033[01;34m')
+LPURPLE=$(echo -en '\033[01;35m')
+LYELLOW=$(echo -en '\033[01;33m')
+LRED=$(echo -en '\033[01;31m')
+LGREEN=$(echo -en '\033[01;32m')
+
+function hr {
+    printf "${LGREEN}=============================================${RESTORE}\n"
+}
+
+function log_hour {
+    printf "${LPURPLE}[%s]${RESTORE} " `date +"%T"`
+}
+
+function log_progname {
+    printf "${LYELLOW}$PROGNAME:${RESTORE} "
+}
+
+function log {
+    log_hour
+    log_progname
+    printf "${LBLUE}"
+}
+
+function logerr {
+    log_hour
+    log_progname
+    printf "${LRED}"
+}
+
+
+
+end=`date +%s`
+total=$((end-start))
+
+log
+printf "Done in %d seconds.\n\n" $total
