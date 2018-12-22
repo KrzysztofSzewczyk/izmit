@@ -53,11 +53,6 @@ mkdir izmit_modules
 cd izmit_modules
 
 log
-printf "Installed packages: ${RESTORE}\n"
-
-ls -x
-
-log
 printf "Removing package ...${RESTORE}\n"
 
 branchName=""
