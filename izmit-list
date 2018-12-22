@@ -33,6 +33,9 @@ function logerr {
     printf "${LRED}"
 }
 
+log
+printf "Installed Izmit packages:\n"
+
 cd izmit_modules
 ls -x
 
