@@ -33,6 +33,8 @@ function logerr {
     printf "${LRED}"
 }
 
+start=`date +%s`
+
 log
 printf "Installed Izmit packages:\n"
 
