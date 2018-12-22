@@ -33,7 +33,8 @@ function logerr {
     printf "${LRED}"
 }
 
-
+cd izmit_modules
+ls -x
 
 end=`date +%s`
 total=$((end-start))
