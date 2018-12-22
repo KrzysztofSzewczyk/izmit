@@ -1,0 +1,49 @@
+#!/bin/bash
+
+PROGNAME="main"
+
+RESTORE=$(echo -en '\033[0m')
+LBLUE=$(echo -en '\033[01;34m')
+LPURPLE=$(echo -en '\033[01;35m')
+LYELLOW=$(echo -en '\033[01;33m')
+LRED=$(echo -en '\033[01;31m')
+LGREEN=$(echo -en '\033[01;32m')
+
+function hr {
+    printf "${LGREEN}=============================================${RESTORE}\n"
+}
+
+function log_hour {
+    printf "${LPURPLE}[%s]${RESTORE} " `date +"%T"`
+}
+
+function log_progname {
+    printf "${LYELLOW}$PROGNAME:${RESTORE} "
+}
+
+function log {
+    log_hour
+    log_progname
+    printf "${LBLUE}"
+}
+
+function logerr {
+    log_hour
+    log_progname
+    printf "${LRED}"
+}
+
+printf "\n${LPURPLE}Izmit v2 by Krzysztof Palaiologos Szewczyk. Copyright (C) 2018. License: MIT${RESTORE}\n"
+
+if [ "$#" -l 1 ]; then
+    logerr
+    printf "Usage: izmit command [args]\n"
+    printf "Commands:\n"
+    printf " - install - install Izmit package\n"
+    printf " - purge - purge Izmit package\n"
+    printf " - list - list installed Izmit packages\n"
+    printf " - make - build Izmit application\n"
+    exit
+fi
+
+"izmit-$1" "${@:2}"

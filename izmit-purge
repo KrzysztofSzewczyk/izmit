@@ -1,0 +1,88 @@
+#!/bin/bash
+
+PROGNAME="purge"
+
+RESTORE=$(echo -en '\033[0m')
+LBLUE=$(echo -en '\033[01;34m')
+LPURPLE=$(echo -en '\033[01;35m')
+LYELLOW=$(echo -en '\033[01;33m')
+LRED=$(echo -en '\033[01;31m')
+LGREEN=$(echo -en '\033[01;32m')
+
+function hr {
+    printf "${LGREEN}=============================================${RESTORE}\n"
+}
+
+function log_hour {
+    printf "${LPURPLE}[%s]${RESTORE} " `date +"%T"`
+}
+
+function log_progname {
+    printf "${LYELLOW}$PROGNAME:${RESTORE} "
+}
+
+function log {
+    log_hour
+    log_progname
+    printf "${LBLUE}"
+}
+
+function logerr {
+    log_hour
+    log_progname
+    printf "${LRED}"
+}
+
+printf "\n${LPURPLE}Izmit: Purge v2 by Krzysztof Palaiologos Szewczyk. Copyright (C) 2018. License: MIT${RESTORE}\n"
+
+if [ "$#" -ne 1 ]; then
+    logerr
+    printf "Usage: izmitpurge package-name ${RESTORE}\n"
+    exit
+fi
+
+log
+printf "Purging $1 ...${RESTORE}\n"
+
+start=`date +%s`
+
+log
+printf "Verifying izmit_modules ...${RESTORE}\n"
+
+mkdir izmit_modules
+cd izmit_modules
+
+log
+printf "Installed packages: ${RESTORE}\n"
+
+ls -x
+
+log
+printf "Removing package ...${RESTORE}\n"
+
+branchName=""
+packageName=""
+
+if [[ $1 == *"@"* ]]; then
+    IFS='@' read -r -a array <<< "$1"
+    branchName=$array[1]
+    packageName=$array[0]
+    rm -rf "$packageName-$branchName"
+else
+    packageName=$1
+    rm -rf "$packageName-master"
+fi
+
+if [ $? -ne 0 ]; then
+    logerr
+    printf "Couldn't purge $packageName. Are you sure that you have sufficient permissions and package exists?${RESTORE}\n"
+    exit
+fi
+
+end=`date +%s`
+total=$((end-start))
+
+log
+printf "Done in %d seconds.\n\n" $total
+
+cd ..
