@@ -1,0 +1,154 @@
+#!/bin/bash
+
+PROGNAME="make"
+
+RESTORE=$(echo -en '\033[0m')
+LBLUE=$(echo -en '\033[01;34m')
+LPURPLE=$(echo -en '\033[01;35m')
+LYELLOW=$(echo -en '\033[01;33m')
+LRED=$(echo -en '\033[01;31m')
+LGREEN=$(echo -en '\033[01;32m')
+
+function hr {
+    printf "${LGREEN}=============================================${RESTORE}\n"
+}
+
+function log_hour {
+    printf "${LPURPLE}[%s]${RESTORE} " `date +"%T"`
+}
+
+function log_progname {
+    printf "${LYELLOW}$PROGNAME:${RESTORE} "
+}
+
+function log {
+    log_hour
+    log_progname
+    printf "${LBLUE}"
+}
+
+function logerr {
+    log_hour
+    log_progname
+    printf "${LRED}"
+}
+
+printf "\n${LPURPLE}IzmitMake v2 by Kamila Palaiologos Szewczyk. Copyright (C) 2018. License: MIT${RESTORE}\n"
+
+hr
+
+if [ "$#" -ne 2 ]; then
+    logerr
+    printf "Usage: izmitmake input.c output.b${RESTORE}\n"
+    exit
+else
+    log
+    printf "Parameters verified. Starting build ...${RESTORE}\n"
+fi
+
+if [ ! -f $1 ]; then
+    logerr
+    printf "FATAL: $1 doesn't exist!${RESTORE}"
+    exit
+else
+    log
+    printf "$1 exists.${RESTORE}\n"
+fi
+
+touch $2 > /dev/null 2> /dev/null
+if [ ! -f $2 ]; then
+    logerr
+    printf "FATAL: Insufficient permissions to create $2.${RESTORE}"
+    exit
+else
+    log
+    printf "Permissions are sufficent to continue the build.${RESTORE}\n"
+    rm -f $2
+fi
+
+hr
+
+log
+printf "Build started ...${RESTORE}\n"
+
+start=`date +%s`
+
+log
+printf "Preprocessing 1/2 ...${RESTORE}\n"
+gcc -E $1 -o "${1%%.*}".i0
+
+if [ $? -ne 0 ]; then
+    logerr
+    printf "Preprocessor failed 1/2.${RESTORE}\n"
+    exit
+fi
+
+log
+printf "Optimizing ...${RESTORE}\n"
+sed '/^#/ d' < "${1%%.*}".i0 > "${1%%.*}".i
+
+if [ $? -ne 0 ]; then
+    logerr
+    printf "Optimizing failed.${RESTORE}\n"
+    exit
+fi
+
+log
+printf "Fetching $1 ...${RESTORE}\n"
+code=`cat "${1%%.*}".i`
+
+if [ $? -ne 0 ]; then
+    logerr
+    printf "Couldn't fetch the source code.${RESTORE}\n"
+    exit
+fi
+
+log
+printf "Fetching libizmit ...${RESTORE}\n"
+wget https://github.com/kspalaiologos/libizmit/raw/master/libizmit.c > /dev/null 2> /dev/null
+libizmit=`cat libizmit.c`
+
+if [ $? -ne 0 ]; then
+    logerr
+    printf "Couldn't fetch libizmit.${RESTORE}\n"
+    exit
+fi
+
+log
+printf "Preprocessing 2/2 ...${RESTORE}\n"
+totalcode="$libizmit $code main();"
+
+if [ $? -ne 0 ]; then
+    logerr
+    printf "Preprocessor failed 2/2.${RESTORE}\n"
+    exit
+fi
+
+log
+printf "Building ...${RESTORE}\n"
+echo "$totalcode" > "${1%%.*}".l
+curl --form "src=$totalcode" -X POST https://uw426.mikr.us/izmit2/izmit.php > $2  2> /dev/null
+
+if [ $? -ne 0 ]; then
+    logerr
+    printf "Build failed.${RESTORE}\n"
+    exit
+fi
+
+hr
+
+log
+printf "Cleaning up ...${RESTORE}\n"
+rm -f libizmit.c "${1%%.*}".l "${1%%.*}".i "${1%%.*}".i0
+
+if [ $? -ne 0 ]; then
+    logerr
+    printf "Couldn't clean up temporary files.${RESTORE}\n"
+    exit
+fi
+
+end=`date +%s`
+total=$((end-start))
+
+log
+printf "Build finished in %d seconds.\n\n" $total
