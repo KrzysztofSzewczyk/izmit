@@ -74,12 +74,12 @@ printf "Build started ...${RESTORE}\n"
 start=`date +%s`
 
 log
-printf "Preprocessing 1/2 ...${RESTORE}\n"
+printf "Preprocessing ...${RESTORE}\n"
 gcc -E $1 -o "${1%%.*}".i0
 
 if [ $? -ne 0 ]; then
     logerr
-    printf "Preprocessor failed 1/2.${RESTORE}\n"
+    printf "Preprocessor failed.${RESTORE}\n"
     exit
 fi
 
@@ -115,12 +115,12 @@ if [ $? -ne 0 ]; then
 fi
 
 log
-printf "Preprocessing 2/2 ...${RESTORE}\n"
+printf "Linking ...${RESTORE}\n"
 totalcode="$libizmit $code main();"
 
 if [ $? -ne 0 ]; then
     logerr
-    printf "Preprocessor failed 2/2.${RESTORE}\n"
+    printf "Linking failed.${RESTORE}\n"
     exit
 fi
 
