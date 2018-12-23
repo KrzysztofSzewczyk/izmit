@@ -8,5 +8,6 @@ unzip $tmp
 cd izmit-master
 rm -f /bin/izmit*
 cp izmit* /bin
+rm -rf /bin/izmit-master/
 cd ../..
 rm -rf izmitmp $tmp
