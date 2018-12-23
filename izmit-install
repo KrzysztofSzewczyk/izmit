@@ -34,14 +34,6 @@ function logerr {
 }
 
 if [ "$#" -ne 1 ]; then
-    if [ -f "izmitfile" ]; then
-        . ./izmitfile
-        for i in "${PACKAGES[@]}"; do
-            install "$i"
-        done
-        exit
-    fi
-
     logerr
     printf "Usage: izmitinstall package-name ${RESTORE}\n"
     exit
