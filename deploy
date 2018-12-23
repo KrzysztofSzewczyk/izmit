@@ -6,7 +6,7 @@ tmp=$(mktemp)
 wget https://github.com/KrzysztofSzewczyk/izmit/archive/master.zip -O $tmp
 unzip $tmp
 cd izmit-master
-rm -f /bin/izmit-*
-cp izmit-* /bin
+rm -f /bin/izmit*
+cp izmit* /bin
 cd ../..
 rm -rf izmitmp $tmp
