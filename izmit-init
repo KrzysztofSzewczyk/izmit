@@ -40,7 +40,7 @@ touch main.c
 mkdir bin
 mkdir inc
 touch izmitfile
-echo "SRC=\"main.c\"\nPREPROCESSOR=\"-Iinc\"\nTARGET=\"bin/app.b\"\nPACKAGES=(\"libizmit\")\n" > izmitfile
+printf "SRC=\"main.c\"\nPREPROCESSOR=\"-Iinc\"\nTARGET=\"bin/app.b\"\nPACKAGES=(\"libizmit\")\n" > izmitfile
 . izmit install libizmit
 
 end=`date +%s`
