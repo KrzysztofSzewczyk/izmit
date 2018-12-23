@@ -10,5 +10,6 @@ rm -rf /bin/izmit*
 cp izmit* /bin
 cp /bin/izmit-master /bin
 rm -rf /bin/izmit-master/
+chmod 777 /bin/izmit*
 cd ../..
 rm -rf izmitmp $tmp
