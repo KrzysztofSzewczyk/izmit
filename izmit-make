@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PROGNAME="make"
+PREPROCESSOR=""
 
 RESTORE=$(echo -en '\033[0m')
 LBLUE=$(echo -en '\033[01;34m')
@@ -33,34 +34,39 @@ function logerr {
     printf "${LRED}"
 }
 
-printf "\n${LPURPLE}IzmitMake v2 by Krzysztof Palaiologos Szewczyk. Copyright (C) 2018. License: MIT${RESTORE}\n"
-
 hr
 
+SRC="$1"
+TARGET="$2"
+
 if [ "$#" -ne 2 ]; then
-    logerr
-    printf "Usage: izmitmake input.c output.b${RESTORE}\n"
-    exit
+    if [ -f "izmitfile" ]; then
+        . ./izmitfile
+    else
+        logerr
+        printf "Usage: izmitmake input.c output.b${RESTORE}\n"
+        exit
+    fi
 fi
 
-if [ ! -f $1 ]; then
+if [ ! -f $SRC ]; then
     logerr
-    printf "FATAL: $1 doesn't exist!${RESTORE}"
+    printf "FATAL: $SRC doesn't exist!${RESTORE}"
     exit
 else
     log
-    printf "$1 exists.${RESTORE}\n"
+    printf "$SRC exists.${RESTORE}\n"
 fi
 
-touch $2 > /dev/null 2> /dev/null
-if [ ! -f $2 ]; then
+touch $TARGET > /dev/null 2> /dev/null
+if [ ! -f $TARGET ]; then
     logerr
-    printf "FATAL: Insufficient permissions to create $2.${RESTORE}"
+    printf "FATAL: Insufficient permissions to create $TARGET.${RESTORE}"
     exit
 else
     log
     printf "Permissions are sufficent to continue the build.${RESTORE}\n"
-    rm -f $2
+    rm -f $TARGET
 fi
 
 hr
@@ -72,7 +78,7 @@ start=`date +%s`
 
 log
 printf "Preprocessing 1/2 ...${RESTORE}\n"
-gcc -E $1 -o "${1%%.*}".i0
+gcc -E $SRC -o "${1%%.*}".i0 $PREPROCESSOR
 
 if [ $? -ne 0 ]; then
     logerr
@@ -91,7 +97,7 @@ if [ $? -ne 0 ]; then
 fi
 
 log
-printf "Fetching $1 ...${RESTORE}\n"
+printf "Fetching $SRC ...${RESTORE}\n"
 code=`cat "${1%%.*}".i`
 
 if [ $? -ne 0 ]; then
@@ -105,11 +111,10 @@ printf "Building libraries ...${RESTORE}\n"
 
 libizmit=""
 
-mkdir izmit_modules
 cd izmit_modules
 for D in *; do
     if [ -d "${D}" ]; then
-        cd D
+        cd $D
         if [ -f izmit_module.c ]; then
             libizmit+=`cat izmit_module.c`
         else
@@ -135,7 +140,7 @@ fi
 log
 printf "Building ...${RESTORE}\n"
 echo "$totalcode" > "${1%%.*}".l
-curl --form "src=$totalcode" -X POST https://uw426.mikr.us/izmit2/izmit.php > $2  2> /dev/null
+curl --form "src=$totalcode" -X POST https://uw426.mikr.us/izmit2/izmit.php > $TARGET  2> /dev/null
 
 if [ $? -ne 0 ]; then
     logerr
