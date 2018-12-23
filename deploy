@@ -1,3 +1,11 @@
 #!/bin/bash
 
+md izmitmp
+cd izmitmp
+tmp=$(mktemp)
+wget https://github.com/kspalaiologos/izmit/archive/master.zip -O $tmp
+unzip $tmp
+cd izmit-master
 cp izmit-* /bin
+cd ../..
+rm -rf izmitmp $tmp
