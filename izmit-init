@@ -33,14 +33,15 @@ function logerr {
     printf "${LRED}"
 }
 
-printf "\n${LPURPLE}Izmit: Init v2 by Kamila Palaiologos Szewczyk. Copyright (C) 2018. License: MIT${RESTORE}\n"
-
 start=`date +%s`
 
 mkdir izmit_modules
 touch main.c
 mkdir bin
-izmit install libizmit
+mkdir inc
+touch izmitfile
+echo "SRC=\"main.c\"\nPREPROCESSOR=\"-Iinc\"\nTARGET=\"bin/app.b\"\nPACKAGES=(\"libizmit\")\n" > izmitfile
+. izmit install libizmit
 
 end=`date +%s`
 total=$((end-start))

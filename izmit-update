@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROGNAME="main"
+PROGNAME="update"
 
 RESTORE=$(echo -en '\033[0m')
 LBLUE=$(echo -en '\033[01;34m')
@@ -33,19 +33,11 @@ function logerr {
     printf "${LRED}"
 }
 
-printf "\n${LPURPLE}Izmit v2 by Kamila Palaiologos Szewczyk. Copyright (C) 2018. License: MIT${RESTORE}\n"
-
-if [ "$#" -lt 1 ]; then
+if [ "$#" -ne 1 ]; then
     logerr
-    printf "Usage: izmit command [args]\n"
-    printf "Commands:\n"
-    printf " - install - install Izmit package\n"
-    printf " - purge - purge Izmit package\n"
-    printf " - list - list installed Izmit packages\n"
-    printf " - make - build Izmit application\n"
-    printf " - update - update Izmit package\n"
-    printf " - init - set up new Izmit application\n"
+    printf "Usage: izmitupdate package-name ${RESTORE}\n"
     exit
 fi
 
-. "izmit-$1" "${@:2}"
+. izmit-purge $1
+. izmit-install $1

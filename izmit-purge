@@ -33,8 +33,6 @@ function logerr {
     printf "${LRED}"
 }
 
-printf "\n${LPURPLE}Izmit: Purge v2 by Kamila Palaiologos Szewczyk. Copyright (C) 2018. License: MIT${RESTORE}\n"
-
 if [ "$#" -ne 1 ]; then
     logerr
     printf "Usage: izmitpurge package-name ${RESTORE}\n"
@@ -49,7 +47,6 @@ start=`date +%s`
 log
 printf "Verifying izmit_modules ...${RESTORE}\n"
 
-mkdir izmit_modules
 cd izmit_modules
 
 log
